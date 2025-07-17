@@ -21,8 +21,6 @@ const userSchema = new moongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    unique: true,
-    lowercase: true,
     minLength: [5, 'Password must be at least 5 characters long']
   },
 })
