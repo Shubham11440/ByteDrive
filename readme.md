@@ -6,10 +6,9 @@ ByteDrive is a full-stack cloud storage application inspired by Google Drive and
 
 ## 🌐 Live Demo
 
-[👉 Click here to view the live demo](#) *(Update this link after deployment)*
+[👉 Click here to view the live demo](https://bytedrive-app.onrender.com/) 
 
-![ByteDrive Home Screenshot](./docs/screenshot-home.png)
-> Tip: Add a `docs` folder and include a screenshot named `screenshot-home.png`.
+![ByteDrive Home Screenshot](./images/image1.png)
 
 ---
 

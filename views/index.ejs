@@ -2,54 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <title>Welcome to ByteDrive</title>
-    <!-- Use your compiled stylesheet for consistent branding -->
+    <!-- This MUST point to your compiled stylesheet -->
     <link href="/output.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <style>
+        body::before {
+            content: ''; position: fixed; inset: 0; z-index: -1; opacity: 0.1;
+            background-image: radial-gradient(#60a5fa 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .dark body::before {
+            opacity: 0.05;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
+<body class="bg-gray-100 dark:bg-gray-900">
 
-    <div class="min-h-screen flex flex-col items-center justify-center text-center p-4">
-
+    <div class="min-h-screen flex items-center justify-center p-4">
         <% if (user) { %>
-
             <!-- LOGGED-IN VIEW -->
-            <div class="space-y-6">
-                <h1 class="text-5xl font-bold">Congratulations!</h1>
-                <p class="text-xl text-gray-600 dark:text-gray-300">
+            <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 text-center space-y-6">
+                <div class="text-green-500 text-6xl"><i class="ri-checkbox-circle-line"></i></div>
+                <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Congratulations!</h1>
+                <p class="text-lg text-gray-500 dark:text-gray-300">
                     Welcome back, <span class="font-semibold text-blue-500"><%= user.user_metadata.username || user.email %></span>.
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/home" class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+                <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                    <a href="/home" class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
                         Go to Your Drive
                     </a>
-                    <a href="/user/logout" class="px-8 py-3 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 transition-colors">
+                    <a href="/user/logout" class="w-full px-6 py-3 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 transition-all duration-300 transform hover:scale-105">
                         Logout
                     </a>
                 </div>
             </div>
-
         <% } else { %>
-
-            <!-- LOGGED-OUT / LANDING PAGE VIEW -->
-            <div class="space-y-6">
-                <h1 class="text-5xl font-bold">Welcome to ByteDrive</h1>
-                <p class="text-xl text-gray-600 dark:text-gray-300">
-                    Your secure and simple cloud storage solution.
+            <!-- LOGGED-OUT LANDING PAGE -->
+            <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 text-center space-y-6">
+                <div class="text-blue-500 text-6xl"><i class="ri-cloud-line"></i></div>
+                <h1 class="text-4xl md:text-5xl font-extrabold">
+                    <span class="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
+                        ByteDrive
+                    </span>
+                </h1>
+                <p class="text-lg text-gray-500 dark:text-gray-300">
+                    Your secure and simple cloud storage solution, built on modern technology.
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/user/login" class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+                <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                    <a href="/user/login" class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
                         Login
                     </a>
-                    <a href="/user/register" class="px-8 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 transition-colors">
+                    <a href="/user/register" class="w-full px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 transition-all duration-300 transform hover:scale-105">
                         Register
                     </a>
                 </div>
             </div>
-
         <% } %>
-
     </div>
-
 </body>
 </html>
