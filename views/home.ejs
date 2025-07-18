@@ -7,7 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
     <style>
-      /* Simple style for file cards */
       .file-card {
         background-color: white;
         border-radius: 8px;
@@ -15,9 +14,13 @@
         padding: 1rem;
         text-align: center;
         word-break: break-all;
+        /* ADD THIS: Set a dark text color for light mode */
+        color: #1f2937; /* text-gray-800 */
       }
       .dark .file-card {
         background-color: #374151; /* gray-700 */
+        /* ADD THIS: Set a light text color for dark mode */
+        color: #f9fafb; /* text-gray-100 */
       }
     </style>
   </head>
