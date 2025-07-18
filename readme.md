@@ -54,9 +54,10 @@ ByteDrive is a full-stack cloud storage application inspired by Google Drive and
 git clone https://github.com/your-username/ByteDrive.git
 cd ByteDrive
 npm install
+```
 
+### 2. ⚙️ Set Up Supabase
 
-2. ⚙️ Set Up Supabase
 Go to supabase.com and create a new project.
 
 Copy:
@@ -77,10 +78,13 @@ Allowed operations: SELECT, INSERT, UPDATE, DELETE
 Target role: authenticated
 USING expression:
 
+```bash
    (bucket_id = 'your-bucket-name' AND (storage.foldername(name))[1] = 'uploads' AND (storage.foldername(name))[2] = (auth.uid())::text)
+```
 
-3. 🔐 Configure Environment Variables
+### 3. 🔐 Configure Environment Variables
 Create a .env file in the root:
+```bash
 # Supabase Config
 SUPABASE_ENDPOINT=https://your-project.supabase.co/storage/v1/s3
 SUPABASE_SECRET_KEY=your-supabase-service-role-key
@@ -88,11 +92,14 @@ SUPABASE_BUCKET=byte-drive
 
 # Optional
 JWT_SECRET=your-jwt-secret
+```
 
-4. ▶️ Run the Application
+### 4. ▶️ Run the Application
+```bash
 npm start
+```
 
-🧠 Key Learnings & Highlights
+## 🧠 Key Learnings & Highlights
 Supabase as a BaaS: Authentication, database, and storage without managing infrastructure.
 
 Row-Level Security (RLS): SQL-based access rules enforced directly at the database layer.
@@ -101,7 +108,9 @@ EJS Rendering: Secure and fast server-rendered UI generation.
 
 Streamlined Dev Workflow: Tailwind + Nodemon via Concurrently.
 
-📁 Folder Structure Overview
+## 📁 Folder Structure Overview
+```bash
+
 ByteDrive/
 ├── routes/                 # Express routers
 ├── utils/                  # Supabase upload logic
@@ -110,3 +119,4 @@ ByteDrive/
 ├── app.js                  # Main server file
 ├── .env                    # Environment variables
 └── README.md
+```
