@@ -1,4 +1,3 @@
-// routes/user.routes.js
 const express = require('express')
 const router = express.Router()
 const supabase = require('../config/supabase')
@@ -21,9 +20,6 @@ router.post('/register', async (req, res) => {
   })
   if (error)
     return res.status(400).send(`Registration failed: ${error.message}`)
-  console.error('--- FULL SUPABASE REGISTRATION ERROR ---')
-  console.log(error)
-  console.error('--------------------------------------')
   res.redirect('/user/login?message=Registration successful! Please log in.')
 })
 

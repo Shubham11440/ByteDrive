@@ -3,9 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Welcome to ByteDrive</title>
+    <!-- Use your compiled stylesheet for consistent branding -->
+    <link href="/output.css" rel="stylesheet">
 </head>
-<body>
-      <h1>Hello World !</h1>
+<body class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
+
+    <div class="min-h-screen flex flex-col items-center justify-center text-center p-4">
+
+        <% if (user) { %>
+
+            <!-- LOGGED-IN VIEW -->
+            <div class="space-y-6">
+                <h1 class="text-5xl font-bold">Congratulations!</h1>
+                <p class="text-xl text-gray-600 dark:text-gray-300">
+                    Welcome back, <span class="font-semibold text-blue-500"><%= user.user_metadata.username || user.email %></span>.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/home" class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+                        Go to Your Drive
+                    </a>
+                    <a href="/user/logout" class="px-8 py-3 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 transition-colors">
+                        Logout
+                    </a>
+                </div>
+            </div>
+
+        <% } else { %>
+
+            <!-- LOGGED-OUT / LANDING PAGE VIEW -->
+            <div class="space-y-6">
+                <h1 class="text-5xl font-bold">Welcome to ByteDrive</h1>
+                <p class="text-xl text-gray-600 dark:text-gray-300">
+                    Your secure and simple cloud storage solution.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/user/login" class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+                        Login
+                    </a>
+                    <a href="/user/register" class="px-8 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 transition-colors">
+                        Register
+                    </a>
+                </div>
+            </div>
+
+        <% } %>
+
+    </div>
+
 </body>
 </html>

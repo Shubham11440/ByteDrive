@@ -2,7 +2,6 @@
 const express = require('express')
 const dotenv = require('dotenv')
 const cookieParser = require('cookie-parser')
-
 const indexRouter = require('./routes/index.routes')
 const userRouter = require('./routes/user.routes')
 const uploadRouter = require('./routes/upload.routes')
@@ -22,7 +21,7 @@ app.use(express.urlencoded({ extended: true }))
 // Routes
 app.use('/', indexRouter)
 app.use('/user', userRouter)
-app.use('/upload', uploadRouter) // This route prefix is important
+app.use('/upload', uploadRouter) 
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {

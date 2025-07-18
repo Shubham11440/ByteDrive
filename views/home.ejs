@@ -1,89 +1,325 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- Head and styles are unchanged -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
     <style>
       .file-card {
         background-color: white;
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         text-align: center;
-        word-break: break-all;
-        /* ADD THIS: Set a dark text color for light mode */
-        color: #1f2937; /* text-gray-800 */
+        overflow: hidden;
       }
       .dark .file-card {
-        background-color: #374151; /* gray-700 */
-        /* ADD THIS: Set a light text color for dark mode */
-        color: #f9fafb; /* text-gray-100 */
+        background-color: #374151;
+      }
+      .file-icon-area {
+        height: 8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #4b5563;
+      }
+      .dark .file-icon-area {
+        color: #d1d5db;
+      }
+      .file-info {
+        padding: 0.75rem;
+        word-break: break-all;
+        color: #1f2937;
+      }
+      .dark .file-info {
+        color: #f9fafb;
+      }
+      .file-actions {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding-top: 0.5rem;
+        border-top: 1px solid #e5e7eb;
+      }
+      .dark .file-actions {
+        border-top-color: #4b5563;
       }
     </style>
   </head>
   <body class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-    
-    <!-- Navigation Bar -->
-    <header class="p-4 flex justify-between items-center bg-white dark:bg-gray-900 shadow-md">
+    <header
+      class="p-4 flex justify-between items-center bg-white dark:bg-gray-900 shadow-md"
+    >
       <h1 class="text-xl font-bold">ByteDrive</h1>
       <div class="flex items-center gap-4">
-        <span>Welcome, <%= user.user_metadata.username || user.email %>!</span>
-        <a href="/user/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</a>
+        <span>Welcome, <%= user.user_metadata.username || user.email %>!</span
+        ><a
+          href="/user/logout"
+          class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          >Logout</a
+        >
       </div>
     </header>
 
     <main class="p-4">
-      <button onclick="showPopUp()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8">
-        Upload File
-      </button>
+      <div class="flex gap-4 mb-4">
+        <button
+          onclick="showPopUp('upload-pop')"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Upload File</button
+        ><button
+          onclick="showPopUp('folder-pop')"
+          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        >
+          New Folder
+        </button>
+      </div>
 
-      <!-- File Display Grid -->
-      <h2 class="text-2xl font-semibold mb-4">Your Files</h2>
-      <% if (files && files.length > 0) { %>
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          <% files.forEach(file => { %>
-            <div class="file-card">
-              <i class="ri-file-3-line text-4xl mb-2"></i>
-              <p class="text-sm font-medium"><%= file.name %></p>
-              <a href="<%= file.publicUrl %>" target="_blank" class="text-blue-500 hover:underline text-xs mt-2 inline-block">View/Download</a>
-            </div>
-          <% }) %>
-        </div>
-      <% } else { %>
-        <p class="text-gray-500">You have no files yet. Upload one to get started!</p>
-      <% } %>
-      <!-- End File Grid -->
+      <!-- BREADCRUMBS -->
+      <nav class="flex items-center text-sm mb-4">
+        <a href="/home/" class="text-blue-500 hover:underline">Home</a>
+        <% if (breadcrumbs) { breadcrumbs.forEach(crumb => { %>
+        <span class="mx-2 text-gray-500">/</span>
+        <a href="/home<%= crumb.path %>" class="text-blue-500 hover:underline"
+          ><%= crumb.name %></a
+        >
+        <% }); } %>
+      </nav>
 
-      <!-- Upload Modal -->
-      <div class="pop hidden backdrop-blur fixed top-0 left-0 h-screen w-screen flex items-center justify-center">
-        <form action="/upload/upload-file" method="post" enctype="multipart/form-data" class="relative bg-white dark:bg-gray-700 p-8 rounded-lg shadow-xl">
-          <div class="flex items-center justify-center w-96">
-            <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-              <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                </svg>
-                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF</p>
-              </div>
-              <input id="dropzone-file" type="file" class="hidden" name="file" required/>
-            </label>
+      <!-- CLEANER TITLE -->
+      <h2 class="text-2xl font-semibold mb-4">
+        Files & Folders in /<%= currentPath || 'Home' %>
+      </h2>
+      <div
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
+      >
+        <% if (files && files.length > 0) { %> <% files.forEach(item => { %> <%
+        if (item.type === 'folder') { %>
+        <a
+          href="/home/<%= item.path %>"
+          class="file-card block hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+        >
+          <div class="file-icon-area"><i class="ri-folder-fill"></i></div>
+          <div class="file-info">
+            <p class="text-sm font-medium"><%= item.name %></p>
           </div>
-          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Upload</button>
-          <button type="button" class="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-400" onclick="hidePopUp()">
+        </a>
+        <% } else { %>
+        <div class="file-card">
+          <div class="file-icon-area">
+            <% let isImage=false;if(item&&item.name){const
+            imageExtensions=['png','jpg','jpeg','gif','svg','webp'];const
+            parts=item.name.split('.');const
+            fileExtension=parts.length>1?parts.pop().toLowerCase():'';isImage=imageExtensions.includes(fileExtension);}
+            %><% if(isImage){ %><img
+              src="<%= item.publicUrl %>"
+              alt="<%= item.name %>"
+              class="w-full h-full object-cover"
+            /><% }else{ %><i class="ri-file-3-line"></i><% } %>
+          </div>
+          <div class="file-info">
+            <p class="text-sm font-medium"><%= item.name %></p>
+            <div class="file-actions">
+              <a
+                href="<%= item.publicUrl %>"
+                target="_blank"
+                class="text-blue-500 hover:underline text-xs"
+                >View</a
+              >
+              <!-- BETTER MOVE ICON -->
+              <button
+                onclick="showMovePopUp('uploads/<%= user.id %>/<%= item.path %>')"
+                class="text-green-500 hover:text-green-700"
+              >
+                <i class="ri-folder-transfer-line text-lg"></i>
+              </button>
+              <form
+                action="/upload/delete-file"
+                method="post"
+                onsubmit="return confirm('Are you sure?');"
+              >
+                <input
+                  type="hidden"
+                  name="filePath"
+                  value="<%= item.path %>"
+                /><button type="submit" class="text-red-500 hover:text-red-700">
+                  <i class="ri-delete-bin-6-line text-lg"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <% } %> <% }) %> <% } else { %>
+        <p class="text-gray-500 col-span-full">This folder is empty.</p>
+        <% } %>
+      </div>
+
+      <!-- ... Modals are unchanged ... -->
+      <div
+        id="upload-pop"
+        class="pop hidden backdrop-blur fixed top-0 left-0 h-screen w-screen flex items-center justify-center"
+      >
+        <form
+          action="/upload/upload-file"
+          method="post"
+          enctype="multipart/form-data"
+          class="relative bg-white dark:bg-gray-700 p-8 rounded-lg shadow-xl"
+        >
+          <h3 class="text-lg font-semibold mb-4">
+            Upload to: /<%= currentPath || 'Home' %>
+          </h3>
+          <input type="hidden" name="currentPath" value="<%= currentPath %>" />
+          <div class="flex items-center justify-center w-96">
+            <label
+              for="dropzone-file"
+              class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
+              ><div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg
+                  class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 16"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                  />
+                </svg>
+                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span class="font-semibold">Click to upload</span> or drag and
+                  drop
+                </p>
+              </div>
+              <input
+                id="dropzone-file"
+                type="file"
+                class="hidden"
+                name="file"
+                required
+            /></label>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+          >
+            Upload</button
+          ><button
+            type="button"
+            class="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-400"
+            onclick="hidePopUp('upload-pop')"
+          >
+            <i class="ri-close-line"></i>
+          </button>
+        </form>
+      </div>
+      <div
+        id="folder-pop"
+        class="pop hidden backdrop-blur fixed top-0 left-0 h-screen w-screen flex items-center justify-center"
+      >
+        <form
+          action="/upload/create-folder"
+          method="post"
+          class="relative bg-white dark:bg-gray-700 p-8 rounded-lg shadow-xl w-96"
+        >
+          <h3 class="text-lg font-semibold mb-4">Create New Folder</h3>
+          <input type="hidden" name="currentPath" value="<%= currentPath %>" />
+          <div>
+            <label for="folderName" class="block mb-2 text-sm font-medium"
+              >Folder Name</label
+            ><input
+              type="text"
+              id="folderName"
+              name="folderName"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4"
+          >
+            Create Folder</button
+          ><button
+            type="button"
+            class="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-400"
+            onclick="hidePopUp('folder-pop')"
+          >
+            <i class="ri-close-line"></i>
+          </button>
+        </form>
+      </div>
+      <div
+        id="move-pop"
+        class="pop hidden backdrop-blur fixed top-0 left-0 h-screen w-screen flex items-center justify-center"
+      >
+        <form
+          action="/upload/move-file"
+          method="post"
+          class="relative bg-white dark:bg-gray-700 p-8 rounded-lg shadow-xl w-96"
+        >
+          <h3 class="text-lg font-semibold mb-4">Move File</h3>
+          <input type="hidden" id="move-from-path" name="fromPath" value="" />
+          <div>
+            <label
+              for="destinationFolder"
+              class="block mb-2 text-sm font-medium"
+              >Choose Destination</label
+            ><select
+              id="destinationFolder"
+              name="destinationFolder"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500"
+            >
+              <option value="uploads/<%= user.id %>">/ (Home)</option>
+              <% if (allFolders) { allFolders.forEach(folder => { %>
+              <option value="uploads/<%= user.id %>/<%= folder.path %>">
+                <%= folder.path %>
+              </option>
+              <% }); } %>
+            </select>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4"
+          >
+            Move File</button
+          ><button
+            type="button"
+            class="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-400"
+            onclick="hidePopUp('move-pop')"
+          >
             <i class="ri-close-line"></i>
           </button>
         </form>
       </div>
     </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script>
-        function showPopUp(){ document.querySelector('.pop').style.display = 'flex' }
-        function hidePopUp(){ document.querySelector('.pop').style.display = 'none' }
+      function showPopUp(id) {
+        document.getElementById(id).style.display = 'flex'
+      }
+      function hidePopUp(id) {
+        document.getElementById(id).style.display = 'none'
+      }
+      function showMovePopUp(fromPath) {
+        document.getElementById('move-from-path').value = fromPath
+        showPopUp('move-pop')
+      }
     </script>
   </body>
 </html>
