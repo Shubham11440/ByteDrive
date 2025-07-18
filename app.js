@@ -1,22 +1,30 @@
+// app.js
 const express = require('express')
-const userRouter = require('./routes/user.routes')
-const { body, validationResult } = require('express-validator')
 const dotenv = require('dotenv')
-const connectToDB = require('./config/db')
 const cookieParser = require('cookie-parser')
 
+const indexRouter = require('./routes/index.routes')
+const userRouter = require('./routes/user.routes')
+const uploadRouter = require('./routes/upload.routes')
+
 dotenv.config()
-connectToDB()
 
 const app = express()
 
+// View Engine Setup
 app.set('view engine', 'ejs')
 
+// Middleware
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use('/user', userRouter)
 
-app.listen(3000, () => {
-    console.log("Listening on port 3000")
+// Routes
+app.use('/', indexRouter)
+app.use('/user', userRouter)
+app.use('/upload', uploadRouter) // This route prefix is important
+
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`)
 })

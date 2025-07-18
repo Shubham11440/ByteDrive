@@ -1,15 +1,86 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <style>
+      /* Simple style for file cards */
+      .file-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 1rem;
+        text-align: center;
+        word-break: break-all;
+      }
+      .dark .file-card {
+        background-color: #374151; /* gray-700 */
+      }
+    </style>
   </head>
-  <body>
-    <h1 class="text-3xl font-bold underline">
-      Hello world!
-    </h1>
+  <body class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+    
+    <!-- Navigation Bar -->
+    <header class="p-4 flex justify-between items-center bg-white dark:bg-gray-900 shadow-md">
+      <h1 class="text-xl font-bold">ByteDrive</h1>
+      <div class="flex items-center gap-4">
+        <span>Welcome, <%= user.user_metadata.username || user.email %>!</span>
+        <a href="/user/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</a>
+      </div>
+    </header>
+
+    <main class="p-4">
+      <button onclick="showPopUp()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8">
+        Upload File
+      </button>
+
+      <!-- File Display Grid -->
+      <h2 class="text-2xl font-semibold mb-4">Your Files</h2>
+      <% if (files && files.length > 0) { %>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <% files.forEach(file => { %>
+            <div class="file-card">
+              <i class="ri-file-3-line text-4xl mb-2"></i>
+              <p class="text-sm font-medium"><%= file.name %></p>
+              <a href="<%= file.publicUrl %>" target="_blank" class="text-blue-500 hover:underline text-xs mt-2 inline-block">View/Download</a>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="text-gray-500">You have no files yet. Upload one to get started!</p>
+      <% } %>
+      <!-- End File Grid -->
+
+      <!-- Upload Modal -->
+      <div class="pop hidden backdrop-blur fixed top-0 left-0 h-screen w-screen flex items-center justify-center">
+        <form action="/upload/upload-file" method="post" enctype="multipart/form-data" class="relative bg-white dark:bg-gray-700 p-8 rounded-lg shadow-xl">
+          <div class="flex items-center justify-center w-96">
+            <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+              <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                </svg>
+                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF</p>
+              </div>
+              <input id="dropzone-file" type="file" class="hidden" name="file" required/>
+            </label>
+          </div>
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Upload</button>
+          <button type="button" class="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-400" onclick="hidePopUp()">
+            <i class="ri-close-line"></i>
+          </button>
+        </form>
+      </div>
+    </main>
+
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <script>
+        function showPopUp(){ document.querySelector('.pop').style.display = 'flex' }
+        function hidePopUp(){ document.querySelector('.pop').style.display = 'none' }
+    </script>
   </body>
 </html>

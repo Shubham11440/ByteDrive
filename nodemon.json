@@ -1,0 +1,11 @@
+{
+  "exec": "node app.js",
+  "watch": ["routes/", "views/", "middleware/", "config/", "utils/", "app.js"],
+  "ext": "js, ejs, json",
+  "ignore": ["node_modules/"],
+  "verbose": true,
+  "events": {
+    "start": "echo 'Nodemon starting...'",
+    "restart": "echo 'Nodemon restarting due to changes...'"
+  }
+}

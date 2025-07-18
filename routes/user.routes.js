@@ -1,82 +1,50 @@
-const express = require('express');
-const { body, validationResult } = require('express-validator');
-const router = express.Router();
-const userModel = require('../models/user.model.js');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+// routes/user.routes.js
+const express = require('express')
+const router = express.Router()
+const supabase = require('../config/supabase')
 
+// --- Render Pages ---
 router.get('/register', (req, res) => {
-    res.render('register');
+  res.render('register')
 })
-
-router.post('/register',
-    body('email').trim().isEmail().isLength({ min: 13 }),
-    body('password').trim().isLength({ min: 8 }),
-    body('username').trim().isLength({ min: 3 }),
-    async (req, res) => {
-        const errors = validationResult(req);
-        
-        if(!errors.isEmpty()) {
-           return res.status(400).json
-           ({ 
-            errors: errors.array(),
-            message: 'Invalid Data' 
-        });
-        }
-        
-        const { email, username, password } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
-        
-        const newUser = await userModel.create({
-          email,
-          username,
-          password : hashedPassword
-        })
-
-        res.json(newUser);
-
-})
-
 router.get('/login', (req, res) => {
-    res.render('login');
+  res.render('login')
 })
 
-// POST Login
-router.post('/login', 
-    body('username').trim().isLength({ min: 3 }),
-    body('password').trim().isLength({ min: 8 }),
-    async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ 
-                errors: errors.array(),
-                message: 'Invalid Data' 
-            });
-        }
+// --- Auth Logic ---
+router.post('/register', async (req, res) => {
+  const { email, password, username } = req.body
+  const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: password,
+    options: { data: { username: username } },
+  })
+  if (error)
+    return res.status(400).send(`Registration failed: ${error.message}`)
+  console.error('--- FULL SUPABASE REGISTRATION ERROR ---')
+  console.log(error)
+  console.error('--------------------------------------')
+  res.redirect('/user/login?message=Registration successful! Please log in.')
+})
 
-        const { username, password } = req.body;
-        const user = await userModel.findOne({ username });
-        
-        if (!user) {
-            return res.status(400).json({ message: 'Username or password is incorrect' });
-        }
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: password,
+  })
+  if (error) return res.status(400).send(`Login failed: ${error.message}`)
+  res.cookie('supabase-auth-token', data.session.access_token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: data.session.expires_in * 1000,
+  })
+  res.redirect('/home')
+})
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Username or password is incorrect' });
-        }
+router.get('/logout', (req, res) => {
+  res.clearCookie('supabase-auth-token')
+  res.redirect('/user/login')
+})
 
-        const token = jwt.sign({
-            userId: user._id,
-            email: user.email,
-            username: user.username
-        }, process.env.JWT_SECRET,
-      )
-
-        res.cookie('token', token);
-        res.send('Logged In');
-    }
-);
-
-module.exports = router;
+module.exports = router
